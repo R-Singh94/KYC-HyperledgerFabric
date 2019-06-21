@@ -1,0 +1,77 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+volumes:
+  orderer2.kyc.com:
+  orderer3.kyc.com:
+  orderer4.kyc.com:
+  orderer5.kyc.com:
+
+networks:
+  kycnet:
+
+services:
+
+  orderer2.kyc.com:
+    extends:
+      file: base/peer-base.yaml
+      service: orderer-base
+    container_name: orderer2.kyc.com
+    networks:
+    - kycnet
+    volumes:
+        - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ./crypto-config/ordererOrganizations/kyc.com/orderers/orderer2.kyc.com/msp:/var/hyperledger/orderer/msp
+        - ./crypto-config/ordererOrganizations/kyc.com/orderers/orderer2.kyc.com/tls/:/var/hyperledger/orderer/tls
+        - orderer2.kyc.com:/var/hyperledger/production/orderer
+    ports:
+    - 8050:7050
+
+  orderer3.kyc.com:
+    extends:
+      file: base/peer-base.yaml
+      service: orderer-base
+    container_name: orderer3.kyc.com
+    networks:
+    - kycnet
+    volumes:
+        - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ./crypto-config/ordererOrganizations/kyc.com/orderers/orderer3.kyc.com/msp:/var/hyperledger/orderer/msp
+        - ./crypto-config/ordererOrganizations/kyc.com/orderers/orderer3.kyc.com/tls/:/var/hyperledger/orderer/tls
+        - orderer3.kyc.com:/var/hyperledger/production/orderer
+    ports:
+    - 9050:7050
+
+  orderer4.kyc.com:
+    extends:
+      file: base/peer-base.yaml
+      service: orderer-base
+    container_name: orderer4.kyc.com
+    networks:
+    - kycnet
+    volumes:
+        - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ./crypto-config/ordererOrganizations/kyc.com/orderers/orderer4.kyc.com/msp:/var/hyperledger/orderer/msp
+        - ./crypto-config/ordererOrganizations/kyc.com/orderers/orderer4.kyc.com/tls/:/var/hyperledger/orderer/tls
+        - orderer4.kyc.com:/var/hyperledger/production/orderer
+    ports:
+    - 10050:7050
+
+  orderer5.kyc.com:
+    extends:
+      file: base/peer-base.yaml
+      service: orderer-base
+    container_name: orderer5.kyc.com
+    networks:
+    - kycnet
+    volumes:
+        - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ./crypto-config/ordererOrganizations/kyc.com/orderers/orderer5.kyc.com/msp:/var/hyperledger/orderer/msp
+        - ./crypto-config/ordererOrganizations/kyc.com/orderers/orderer5.kyc.com/tls/:/var/hyperledger/orderer/tls
+        - orderer5.kyc.com:/var/hyperledger/production/orderer
+    ports:
+    - 11050:7050

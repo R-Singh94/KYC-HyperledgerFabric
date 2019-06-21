@@ -1,0 +1,230 @@
+version: '2'
+
+volumes:
+  orderer.kyc.com:
+  peer0.Bank.kyc.com:
+  peer1.Bank.kyc.com:
+  peer0.Client.kyc.com:
+  peer1.Client.kyc.com:
+  peer0.Validator.kyc.com:
+  peer1.Validator.kyc.com:
+
+networks:
+  kycnet:
+
+services:
+
+  bankCa.kyc.com:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.kyc.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.Bank.kyc.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/8037d8a1534e7f178a5e425a52165fedb70fcd58c7258c8a226ec85d2050a489_sk
+    ports:
+      - "6054:6054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/Bank.kyc.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: bankca.kyc.com
+    networks:
+      - kycnet
+
+  clientCa.kyc.com:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.kyc.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.Client.kyc.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/eb7705763b478223a85edb2245cef03828a4277890a1e49d5b2405be00bbb7b4_sk
+    ports:
+      - "6064:6064"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/Client.kyc.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: clientca.kyc.com
+    networks:
+      - kycnet
+
+  validatorCa.kyc.com:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.kyc.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.Validator.kyc.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/dc326f40d7f9159b748d7ae44b4a15f328559e770a754f2a86b64db9e5d2edcc_sk
+    ports:
+      - "6074:6074"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/Validator.kyc.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: validatorca.kyc.com
+    networks:
+      - kycnet
+
+  orderer.kyc.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.kyc.com
+    container_name: orderer.kyc.com
+    networks:
+      - kycnet
+
+  peer0.Bank.kyc.com:
+    container_name: peer0.Bank.kyc.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.Bank.kyc.com
+    networks:
+      - kycnet
+
+  peer1.Bank.kyc.com:
+    container_name: peer1.Bank.kyc.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.Bank.kyc.com
+    networks:
+      - kycnet
+
+  peer0.Client.kyc.com:
+    container_name: peer0.Client.kyc.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.Client.kyc.com
+    networks:
+      - kycnet
+
+  peer1.Client.kyc.com:
+    container_name: peer1.Client.kyc.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.Client.kyc.com
+    networks:
+      - kycnet
+
+  peer0.Validator.kyc.com:
+    container_name: peer0.Validator.kyc.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.Validator.kyc.com
+    networks:
+      - kycnet
+
+  peer1.Validator.kyc.com:
+    container_name: peer1.Validator.kyc.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.Validator.kyc.com
+    networks:
+      - kycnet
+
+  bankcli:
+    container_name: bankcli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=DEBUG
+      #- FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=bankcli
+      - CORE_PEER_ADDRESS=peer0.Bank.kyc.com:7051
+      - CORE_PEER_LOCALMSPID=BankMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Bank.kyc.com/peers/peer0.Bank.kyc.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Bank.kyc.com/peers/peer0.Bank.kyc.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Bank.kyc.com/peers/peer0.Bank.kyc.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Bank.kyc.com/users/Admin@Bank.kyc.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.kyc.com
+      - peer0.Bank.kyc.com
+      - peer1.Bank.kyc.com
+      - peer0.Client.kyc.com
+      - peer1.Client.kyc.com
+      - peer0.Validator.kyc.com
+      - peer1.Validator.kyc.com
+    networks:
+      - kycnet
+
+  clientcli:
+    container_name: clientcli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=DEBUG
+      #- FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=clientcli
+      - CORE_PEER_ADDRESS=peer0.Client.kyc.com:9051
+      - CORE_PEER_LOCALMSPID=ClientMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Client.kyc.com/peers/peer0.Client.kyc.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Client.kyc.com/peers/peer0.Client.kyc.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Client.kyc.com/peers/peer0.Client.kyc.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Client.kyc.com/users/Admin@Client.kyc.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.kyc.com
+      - peer0.Bank.kyc.com
+      - peer1.Bank.kyc.com
+      - peer0.Client.kyc.com
+      - peer1.Client.kyc.com
+      - peer0.Validator.kyc.com
+      - peer1.Validator.kyc.com
+    networks:
+      - kycnet
+
+  validatorcli:
+    container_name: validatorcli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=DEBUG
+      #- FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=validatorcli
+      - CORE_PEER_ADDRESS=peer0.Validator.kyc.com:11051
+      - CORE_PEER_LOCALMSPID=ValidatorMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Validator.kyc.com/peers/peer0.Validator.kyc.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Validator.kyc.com/peers/peer0.Validator.kyc.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Validator.kyc.com/peers/peer0.Validator.kyc.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/Validator.kyc.com/users/Admin@Validator.kyc.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.kyc.com
+      - peer0.Bank.kyc.com
+      - peer1.Bank.kyc.com
+      - peer0.Client.kyc.com
+      - peer1.Client.kyc.com
+      - peer0.Validator.kyc.com
+      - peer1.Validator.kyc.com
+    networks:
+      - kycnet

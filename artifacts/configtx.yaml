@@ -1,0 +1,343 @@
+################################################################################
+#
+#   Section: Organizations
+#
+#   - This section defines the different organizational identities.
+#
+################################################################################
+Organizations:
+
+    - &OrdererOrg
+        Name: OrdererOrg
+
+        # ID to load the MSP definition as
+        ID: OrdererMSP
+
+        # MSPDir is the filesystem path which contains the MSP configuration
+        MSPDir: crypto-config/ordererOrganizations/kyc.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+
+    - &Client
+        Name: ClientMSP
+
+        # ID to load the MSP definition as
+        ID: ClientMSP
+
+        MSPDir: crypto-config/peerOrganizations/Client.kyc.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('ClientMSP.admin', 'ClientMSP.peer', 'ClientMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('ClientMSP.admin', 'ClientMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('ClientMSP.admin')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.
+            - Host: peer0.Client.kyc.com
+              Port: 7051
+
+    - &Validator
+        Name: ValidatorMSP
+
+        # ID to load the MSP definition as
+        ID: ValidatorMSP
+
+        MSPDir: crypto-config/peerOrganizations/Validator.kyc.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('ValidatorMSP.admin', 'ValidatorMSP.peer', 'ValidatorMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('ValidatorMSP.admin', 'ValidatorMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('ValidatorMSP.admin')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.
+            - Host: peer0.Validator.kyc.com
+              Port: 8051
+
+    - &Bank
+        Name: BankMSP
+
+        # ID to load the MSP definition as
+        ID: BankMSP
+
+        MSPDir: crypto-config/peerOrganizations/Bank.kyc.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('BankMSP.admin', 'BankMSP.peer', 'BankMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('BankMSP.admin', 'BankMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('BankMSP.admin')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.
+            - Host: peer0.Bank.kyc.com
+              Port: 9051
+
+################################################################################
+#
+#   SECTION: Capabilities
+#
+#   - This section defines the capabilities of fabric network.
+#
+################################################################################
+
+Capabilities:
+    # Channel capabilities apply to both the orderers and the peers and must be
+    # supported by both.
+    # Set the value of the capability to true to require it.
+    Channel: &ChannelCapabilities
+        # V1.3 for Channel is a catchall flag for behavior which has been
+        # determined to be desired for all orderers and peers running at the v1.3.x
+        V1_4: true
+
+    # Orderer capabilities apply only to the orderers, and may be safely
+    # used with prior release peers.
+    # Set the value of the capability to true to require it.
+    Orderer: &OrdererCapabilities
+        # V1.3 for Orderer is a catchall flag for behavior which has been
+        # determined to be desired for all orderers running at the v1.1.x
+        V1_4: true
+
+    # Application capabilities apply only to the peer network, and may be safely
+    # used with prior release orderers.
+    # Set the value of the capability to true to require it.
+    Application: &ApplicationCapabilities
+        # V1.3 for Application enables the new non-backwards compatible
+        # features and fixes of fabric v1.3.
+        V1_4: true
+
+################################################################################
+#
+#   SECTION: Application
+#
+#   - This section defines the values to encode into a config transaction or
+#   genesis block for application related parameters
+#
+################################################################################
+Application: &ApplicationConfig
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the application side of the network
+    Organizations:
+
+    # Policies defines the set of policies at this level of the config tree
+    # For Application policies, their canonical path is
+    #   /Channel/Application/<PolicyName>
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+    Capabilities:
+        <<: *ApplicationCapabilities
+################################################################################
+#
+#   SECTION: Orderer
+#
+#   - This section defines the values to encode into a config transaction or
+#   genesis block for orderer related parameters
+#
+################################################################################
+Orderer: &OrdererConfig
+
+    OrdererType: solo
+
+    Addresses:
+        - orderer.kyc.com:7050
+
+    # Batch Timeout: The amount of time to wait before creating a batch
+    BatchTimeout: 2s
+
+    # Batch Size: Controls the number of messages batched into a block
+    BatchSize:
+
+        # Max Message Count: The maximum number of messages to permit in a batch
+        MaxMessageCount: 10
+
+        # Absolute Max Bytes: The absolute maximum number of bytes allowed for
+        # the serialized messages in a batch.
+        AbsoluteMaxBytes: 99 MB
+
+        # Preferred Max Bytes: The preferred maximum number of bytes allowed for
+        # the serialized messages in a batch. A message larger than the preferred
+        # max bytes will result in a batch larger than preferred max bytes.
+        PreferredMaxBytes: 512 KB
+
+    Kafka:
+        # Brokers: A list of Kafka brokers to which the orderer connects
+        Brokers:
+            - 127.0.0.1:9092
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the orderer side of the network
+    Organizations:
+
+    # Policies defines the set of policies at this level of the config tree
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        # BlockValidation specifies what signatures must be included in the block
+        # from the orderer for the peer to validate it.
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+################################################################################
+#
+#   CHANNEL
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for channel related parameters.
+#
+################################################################################
+Channel: &ChannelConfig
+    # Policies defines the set of policies at this level of the config tree
+    Policies:
+        # Who may invoke the 'Deliver' API
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        # Who may invoke the 'Broadcast' API
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        # By default, who may modify elements at this config level
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+    # Capabilities describes the channel level capabilities, see the
+    # dedicated Capabilities section elsewhere in this file for a full
+    # description
+    Capabilities:
+        <<: *ChannelCapabilities
+
+################################################################################
+#
+#   Profile
+#
+#   - Different configuration profiles may be encoded here to be specified
+#   as parameters to the configtxgen tool
+#
+################################################################################
+Profiles:
+
+    KYCOrgOrdererGenesis:
+        <<: *ChannelConfig
+        Orderer:
+            <<: *OrdererConfig
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            KYCConsortium:
+                Organizations:
+                    - *Client
+                    - *Validator
+                    - *Bank
+
+    KYCOrgChannel:
+        Consortium: KYCConsortium
+        <<: *ChannelConfig
+        Application:
+            <<: *ApplicationConfig
+            Organizations:
+                - *Client
+                - *Validator
+                - *Bank
+
+    KYCEtcdRaft:
+        <<: *ChannelConfig
+        Capabilities:
+            <<: *ChannelCapabilities
+        Orderer:
+            <<: *OrdererConfig
+            OrdererType: etcdraft
+            EtcdRaft:
+                Consenters:
+                - Host: orderer.kyc.com
+                  Port: 7050
+                  ClientTLSCert: crypto-config/ordererOrganizations/kyc.com/orderers/orderer.kyc.com/tls/server.crt
+                  ServerTLSCert: crypto-config/ordererOrganizations/kyc.com/orderers/orderer.kyc.com/tls/server.crt
+                - Host: orderer2.kyc.com
+                  Port: 7050
+                  ClientTLSCert: crypto-config/ordererOrganizations/kyc.com/orderers/orderer2.kyc.com/tls/server.crt
+                  ServerTLSCert: crypto-config/ordererOrganizations/kyc.com/orderers/orderer2.kyc.com/tls/server.crt
+                - Host: orderer3.kyc.com
+                  Port: 7050
+                  ClientTLSCert: crypto-config/ordererOrganizations/kyc.com/orderers/orderer3.kyc.com/tls/server.crt
+                  ServerTLSCert: crypto-config/ordererOrganizations/kyc.com/orderers/orderer3.kyc.com/tls/server.crt
+                - Host: orderer4.kyc.com
+                  Port: 7050
+                  ClientTLSCert: crypto-config/ordererOrganizations/kyc.com/orderers/orderer4.kyc.com/tls/server.crt
+                  ServerTLSCert: crypto-config/ordererOrganizations/kyc.com/orderers/orderer4.kyc.com/tls/server.crt
+                - Host: orderer5.kyc.com
+                  Port: 7050
+                  ClientTLSCert: crypto-config/ordererOrganizations/kyc.com/orderers/orderer5.kyc.com/tls/server.crt
+                  ServerTLSCert: crypto-config/ordererOrganizations/kyc.com/orderers/orderer5.kyc.com/tls/server.crt
+            Addresses:
+                - orderer.kyc.com:7050
+                - orderer2.kyc.com:7050
+                - orderer3.kyc.com:7050
+                - orderer4.kyc.com:7050
+                - orderer5.kyc.com:7050
+
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Application:
+            <<: *ApplicationConfig
+            Organizations:
+            - <<: *OrdererOrg
+        Consortiums:
+            KYCConsortium:
+                Organizations:
+                - *Client
+                - *Validator
+                - *Bank
