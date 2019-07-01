@@ -98,3 +98,24 @@ if [ "$?" -ne 0 ]; then
   echo "Failed to generate anchor peer update for Bank..."
   exit 1
 fi
+
+
+echo
+echo "#################################################################"
+echo "#### Replacing the PrivateKey File names in Docker Files ########"
+echo "#################################################################"
+cp docker-compose-template.yaml docker-compose.yaml
+CURRENT_DIR=$PWD
+cd crypto-config/peerOrganizations/Bank.kyc.com/ca/
+PRIV_KEY=$(ls *_sk)
+cd "$CURRENT_DIR"
+sed -n "s/BANK_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose.yaml
+cd crypto-config/peerOrganizations/Client.kyc.com/ca/
+PRIV_KEY=$(ls *_sk)
+cd "$CURRENT_DIR"
+sed -n "s/CLIENT_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose.yaml
+cd crypto-config/peerOrganizations/Validator.kyc.com/ca/
+PRIV_KEY=$(ls *_sk)
+cd "$CURRENT_DIR"
+sed -n "s/VALIDATOR_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose.yaml
+echo "New Docker Compose file Generated"
