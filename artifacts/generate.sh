@@ -2,7 +2,7 @@
 
 export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:${PWD}/../bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
-CHANNEL_NAME=kyc-channel
+CHANNEL_NAME=kycnet
 if [ -z "$1" ]; then
   echo "Please provide the consensus type in the command line"
   echo "Usage : generate.sh [CONSENSUS_TYPE]"
@@ -104,18 +104,24 @@ echo
 echo "#################################################################"
 echo "#### Replacing the PrivateKey File names in Docker Files ########"
 echo "#################################################################"
+#Remove the existing docker compose file
+if [ -f docker-compose.yaml ]; then
+  rm docker-compose.yaml
+fi
+#Copy the template as the new docker compose file
 cp docker-compose-template.yaml docker-compose.yaml
 CURRENT_DIR=$PWD
+#Replace the Private Key file names in the Docker compose file
 cd crypto-config/peerOrganizations/Bank.kyc.com/ca/
 PRIV_KEY=$(ls *_sk)
 cd "$CURRENT_DIR"
-sed -n "s/BANK_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose.yaml
+sed -i "s/BANK_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose.yaml
 cd crypto-config/peerOrganizations/Client.kyc.com/ca/
 PRIV_KEY=$(ls *_sk)
 cd "$CURRENT_DIR"
-sed -n "s/CLIENT_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose.yaml
+sed -i "s/CLIENT_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose.yaml
 cd crypto-config/peerOrganizations/Validator.kyc.com/ca/
 PRIV_KEY=$(ls *_sk)
 cd "$CURRENT_DIR"
-sed -n "s/VALIDATOR_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose.yaml
+sed -i "s/VALIDATOR_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose.yaml
 echo "New Docker Compose file Generated"
