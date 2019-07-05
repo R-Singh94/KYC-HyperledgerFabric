@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:${PWD}/../bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
@@ -47,9 +47,9 @@ echo "#########  Generating Orderer Genesis block ##############"
 echo "##########################################################"
 
 if test "$CONSENSUS_TYPE" = "solo" ; then
-  configtxgen -profile KYCOrgOrdererGenesis -channelID $CHANNEL_NAME -outputBlock ./channel-artifacts/genesis.block
+  configtxgen -profile KYCOrgOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
 elif test "$CONSENSUS_TYPE" = "etcdraft" ; then
-  configtxgen -profile KYCEtcdRaft -channelID $CHANNEL_NAME -outputBlock ./channel-artifacts/genesis.block
+  configtxgen -profile KYCEtcdRaft -outputBlock ./channel-artifacts/genesis.block
 else
   echo "unrecognized CONSESUS_TYPE='$CONSENSUS_TYPE'. exiting"
   exit 1
@@ -93,7 +93,7 @@ echo
 echo "#################################################################"
 echo "#######    Generating anchor peer update for Bank      ##########"
 echo "#################################################################"
-configtxgen -profile KYCOrgChannel -outputAnchorPeersUpdate ./channel-artifacts/BankMSPanchors.tx -channelID $CHANNEL_NAME -asOrg ValidatorMSP
+configtxgen -profile KYCOrgChannel -outputAnchorPeersUpdate ./channel-artifacts/BankMSPanchors.tx -channelID $CHANNEL_NAME -asOrg BankMSP
 if [ "$?" -ne 0 ]; then
   echo "Failed to generate anchor peer update for Bank..."
   exit 1

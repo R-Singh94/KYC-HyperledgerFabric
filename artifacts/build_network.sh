@@ -9,6 +9,8 @@ if [ "$2" != "" ]; then
 else
     CONSENSUS_TYPE=solo
 fi
+CHANNEL_NAME=kycnet
+LANGUAGE=golang
 BLACKLISTED_VERSIONS="^1\.0\. ^1\.1\.0-preview ^1\.1\.0-alpha"
 export IMAGE_TAG="latest"
 COMPOSE_FILE=docker-compose.yaml
@@ -55,8 +57,8 @@ function prerequisite() {
 
         echo "$DOCKER_IMAGE_VERSION" | grep -q $UNSUPPORTED_VERSION
         if [ $? -eq 0 ]; then
-        echo "ERROR! Fabric Docker image version of $DOCKER_IMAGE_VERSION does not match this newer version of BYFN and is unsupported. Either move to a later version of Fabric or checkout an earlier version of fabric-samples."
-        exit 1
+            echo "ERROR! Fabric Docker image version of $DOCKER_IMAGE_VERSION does not match this newer version of BYFN and is unsupported. Either move to a later version of Fabric or checkout an earlier version of fabric-samples."
+            exit 1
         fi
     done
 }
@@ -87,8 +89,12 @@ function networkUp() {
         sleep 14
     fi
 
-    #TO-DO: Creation of the Channel and joining the peers to the Channel
-
+    #Creation of the Channel and joining the peers to the Channel
+    docker exec clientcli scripts/script.sh $CHANNEL_NAME $LANGUAGE
+    if [ $? -ne 0 ]; then
+        echo "ERROR !!!! Channel Creation and Peer Joining Failed"
+        exit 1
+    fi
 }
 
 function networkDown() {
@@ -102,7 +108,7 @@ elif [ "$MODE" == "down" ]; then
     networkDown
 elif [ "$MODE" == "restart" ]; then
     networkDown
-    networkUp]
+    networkUp
 else
     printHelp
     exit 1

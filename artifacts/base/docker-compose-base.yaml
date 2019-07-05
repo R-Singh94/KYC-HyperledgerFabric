@@ -15,51 +15,6 @@ services:
     ports:
       - 7050:7050
 
-  peer0.Bank.kyc.com:
-    container_name: peer0.Bank.kyc.com
-    extends:
-      file: peer-base.yaml
-      service: peer-base
-    environment:
-      - CORE_PEER_ID=peer0.Bank.kyc.com
-      - CORE_PEER_ADDRESS=peer0.Bank.kyc.com:7051
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
-      - CORE_PEER_CHAINCODEADDRESS=peer0.Bank.kyc.com:7052
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.Bank.kyc.com:8051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.Bank.kyc.com:7051
-      - CORE_PEER_LOCALMSPID=BankMSP
-    volumes:
-        - /var/run/:/host/var/run/
-        - ../crypto-config/peerOrganizations/Bank.kyc.com/peers/peer0.Bank.kyc.com/msp:/etc/hyperledger/fabric/msp
-        - ../crypto-config/peerOrganizations/Bank.kyc.com/peers/peer0.Bank.kyc.com/tls:/etc/hyperledger/fabric/tls
-        - peer0.Bank.kyc.com:/var/hyperledger/production
-    ports:
-      - 7051:7051
-
-  peer1.Bank.kyc.com:
-    container_name: peer1.Bank.kyc.com
-    extends:
-      file: peer-base.yaml
-      service: peer-base
-    environment:
-      - CORE_PEER_ID=peer1.Bank.kyc.com
-      - CORE_PEER_ADDRESS=peer1.Bank.kyc.com:8051
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
-      - CORE_PEER_CHAINCODEADDRESS=peer1.Bank.kyc.com:8052
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.Bank.kyc.com:8051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.Bank.kyc.com:7051
-      - CORE_PEER_LOCALMSPID=BankMSP
-    volumes:
-        - /var/run/:/host/var/run/
-        - ../crypto-config/peerOrganizations/Bank.kyc.com/peers/peer1.Bank.kyc.com/msp:/etc/hyperledger/fabric/msp
-        - ../crypto-config/peerOrganizations/Bank.kyc.com/peers/peer1.Bank.kyc.com/tls:/etc/hyperledger/fabric/tls
-        - peer1.Bank.kyc.com:/var/hyperledger/production
-
-    ports:
-      - 8051:8051
-
   peer0.Client.kyc.com:
     container_name: peer0.Client.kyc.com
     extends:
@@ -67,12 +22,12 @@ services:
       service: peer-base
     environment:
       - CORE_PEER_ID=peer0.Client.kyc.com
-      - CORE_PEER_ADDRESS=peer0.Client.kyc.com:9051
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
-      - CORE_PEER_CHAINCODEADDRESS=peer0.Client.kyc.com:9052
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.Client.kyc.com:9051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.Client.kyc.com:10051
+      - CORE_PEER_ADDRESS=peer0.Client.kyc.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.Client.kyc.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.Client.kyc.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.Client.kyc.com:7051
       - CORE_PEER_LOCALMSPID=ClientMSP
     volumes:
         - /var/run/:/host/var/run/
@@ -80,7 +35,7 @@ services:
         - ../crypto-config/peerOrganizations/Client.kyc.com/peers/peer0.Client.kyc.com/tls:/etc/hyperledger/fabric/tls
         - peer0.Client.kyc.com:/var/hyperledger/production
     ports:
-      - 9051:9051
+      - 7051:7051
 
   peer1.Client.kyc.com:
     container_name: peer1.Client.kyc.com
@@ -89,22 +44,22 @@ services:
       service: peer-base
     environment:
       - CORE_PEER_ID=peer1.Client.kyc.com
-      - CORE_PEER_ADDRESS=peer1.Client.kyc.com:10051
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:10051
-      - CORE_PEER_CHAINCODEADDRESS=peer1.Client.kyc.com:10052
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10052
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.Client.kyc.com:10051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.Client.kyc.com:9051
+      - CORE_PEER_ADDRESS=peer1.Client.kyc.com:8051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.Client.kyc.com:8052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.Client.kyc.com:8051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.Client.kyc.com:7051
       - CORE_PEER_LOCALMSPID=ClientMSP
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/Client.kyc.com/peers/peer1.Client.kyc.com/msp:/etc/hyperledger/fabric/msp
         - ../crypto-config/peerOrganizations/Client.kyc.com/peers/peer1.Client.kyc.com/tls:/etc/hyperledger/fabric/tls
         - peer1.Client.kyc.com:/var/hyperledger/production
-    ports:
-      - 10051:10051
 
-  
+    ports:
+      - 8051:8051
+
   peer0.Validator.kyc.com:
     container_name: peer0.Validator.kyc.com
     extends:
@@ -112,11 +67,11 @@ services:
       service: peer-base
     environment:
       - CORE_PEER_ID=peer0.Validator.kyc.com
-      - CORE_PEER_ADDRESS=peer0.Validator.kyc.com:11051
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:11051
+      - CORE_PEER_ADDRESS=peer0.Validator.kyc.com:9051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
       - CORE_PEER_CHAINCODEADDRESS=peer0.Validator.kyc.com:9052
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.Validator.kyc.com:11051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.Validator.kyc.com:9051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.Validator.kyc.com:10051
       - CORE_PEER_LOCALMSPID=ValidatorMSP
     volumes:
@@ -125,8 +80,7 @@ services:
         - ../crypto-config/peerOrganizations/Validator.kyc.com/peers/peer0.Validator.kyc.com/tls:/etc/hyperledger/fabric/tls
         - peer0.Validator.kyc.com:/var/hyperledger/production
     ports:
-      - 11051:11051
-
+      - 9051:9051
 
   peer1.Validator.kyc.com:
     container_name: peer1.Validator.kyc.com
@@ -135,11 +89,11 @@ services:
       service: peer-base
     environment:
       - CORE_PEER_ID=peer1.Validator.kyc.com
-      - CORE_PEER_ADDRESS=peer1.Validator.kyc.com:12051
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:12051
+      - CORE_PEER_ADDRESS=peer1.Validator.kyc.com:10051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:10051
       - CORE_PEER_CHAINCODEADDRESS=peer1.Validator.kyc.com:10052
       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10052
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.Validator.kyc.com:12051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.Validator.kyc.com:10051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.Validator.kyc.com:9051
       - CORE_PEER_LOCALMSPID=ValidatorMSP
     volumes:
@@ -147,5 +101,51 @@ services:
         - ../crypto-config/peerOrganizations/Validator.kyc.com/peers/peer1.Validator.kyc.com/msp:/etc/hyperledger/fabric/msp
         - ../crypto-config/peerOrganizations/Validator.kyc.com/peers/peer1.Validator.kyc.com/tls:/etc/hyperledger/fabric/tls
         - peer1.Validator.kyc.com:/var/hyperledger/production
+    ports:
+      - 10051:10051
+
+  
+  peer0.Bank.kyc.com:
+    container_name: peer0.Bank.kyc.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.Bank.kyc.com
+      - CORE_PEER_ADDRESS=peer0.Bank.kyc.com:11051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:11051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.Bank.kyc.com:11052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.Bank.kyc.com:11051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.Bank.kyc.com:12051
+      - CORE_PEER_LOCALMSPID=BankMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/Bank.kyc.com/peers/peer0.Bank.kyc.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/Bank.kyc.com/peers/peer0.Bank.kyc.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.Bank.kyc.com:/var/hyperledger/production
+    ports:
+      - 11051:11051
+
+
+  peer1.Bank.kyc.com:
+    container_name: peer1.Bank.kyc.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.Bank.kyc.com
+      - CORE_PEER_ADDRESS=peer1.Bank.kyc.com:12051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:12051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.Bank.kyc.com:12052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:12052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.Bank.kyc.com:12051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.Bank.kyc.com:11051
+      - CORE_PEER_LOCALMSPID=BankMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/Bank.kyc.com/peers/peer1.Bank.kyc.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/Bank.kyc.com/peers/peer1.Bank.kyc.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.Bank.kyc.com:/var/hyperledger/production
     ports:
       - 12051:12051
