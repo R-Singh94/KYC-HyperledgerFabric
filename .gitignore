@@ -1,4 +1,5 @@
 
 artifacts/channel-artifacts/
 artifacts/crypto-config/
-artifacts/chaincode/*
+artifacts/chaincode/node_modules
+artifacts/chaincode/package-lock.json

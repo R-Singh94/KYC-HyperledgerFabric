@@ -1,0 +1,21 @@
+{
+  "name": "chaincode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "testchaincode.js",
+  "engines": {
+    "node": ">=8.4.0",
+    "npm": ">=5.3.0"
+  },
+  "scripts": {
+    "start": "node testchaincode.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engine-strict": true,
+  "engineStrict": true,
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fabric-shim": "^2.0.0-snapshot.99"
+  }
+}
