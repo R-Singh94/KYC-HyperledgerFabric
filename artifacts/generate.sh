@@ -42,6 +42,11 @@ if [ "$?" -ne 0 ]; then
   exit 1
 fi
 
+#Check if channel-artifacts exists
+if [ ! -d channel-artifacts ]; then
+  mkdir channel-artifacts
+fi
+
 echo "##########################################################"
 echo "#########  Generating Orderer Genesis block ##############"
 echo "##########################################################"

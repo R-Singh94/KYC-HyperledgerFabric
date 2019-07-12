@@ -89,7 +89,7 @@ installChaincode 1 2
 echo "Installing chaincode on bank org"
 installChaincode 1 3
 
-sleep $DELAY
+sleep 2*$DELAY
 
 ## instantiate chaincode
 echo "Instantiate chaincode on client org"
