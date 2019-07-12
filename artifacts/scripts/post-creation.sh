@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # import utils
-. scripts/utils.sh
+. utils.sh
 
 # To try out things
+instantiateChaincode 1 1
