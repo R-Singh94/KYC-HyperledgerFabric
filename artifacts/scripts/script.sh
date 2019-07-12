@@ -5,12 +5,15 @@ LANGUAGE="$2"
 DELAY="5"
 MAX_RETRY=10
 
+LANGUAGE=node
+CC_SRC_PATH=/opt/gopath/src/github.com/chaincode
+
 # import utils
 . scripts/utils.sh
 
 createChannel() {
 	setGlobals 0 1
-
+VERSION
 	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
                 set -x
 		peer channel create -o orderer.kyc.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx >&log.txt
@@ -56,10 +59,10 @@ updateAnchorPeers() {
     set +x
   fi
   cat log.txt
-  verifyResult $res "Anchor peer update failed"
-  echo "===================== Anchor peers updated for org '$CORE_PEER_LOCALMSPID' on channel '$CHANNEL_NAME' ===================== "
-  sleep $DELAY
-  echo
+  veriCHANNEL_NAMEupdate failed"
+  echoCHANNEL_NAMEhor peers updated for org '$CORE_PEER_LOCALMSPID' on channel '$CHANNEL_NAME' ===================== "
+  sleeCHANNEL_NAME
+  echoCHANNEL_NAME
 }
 
 ## Create channel
@@ -77,3 +80,17 @@ echo "Updating anchor peers for Validator..."
 updateAnchorPeers 0 2
 echo "Updating anchor peers for Bank..."
 updateAnchorPeers 0 3
+
+## Install chaincode
+echo "Installing chaincode on client org"
+installChaincode 1 1
+echo "Installing chaincode on validator org"
+installChaincode 1 2
+echo "Installing chaincode on bank org"
+installChaincode 1 3
+
+sleep $DELAY
+
+## instantiate chaincode
+echo "Instantiate chaincode on client org"
+instantiateChaincode 1 1
