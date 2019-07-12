@@ -1,5 +1,9 @@
 
+# crypto-material 
 artifacts/channel-artifacts/
-artifacts/crypto-config/
-artifacts/chaincode/node_modules
-artifacts/chaincode/package-lock.json
+artifacts/crypto-config
+
+
+# chaincode ignore
+chaincode/node_modules
+chaincode/package-lock.json
