@@ -13,7 +13,7 @@ CC_SRC_PATH=/opt/gopath/src/github.com/chaincode
 
 createChannel() {
 	setGlobals 0 1
-VERSION
+	
 	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
                 set -x
 		peer channel create -o orderer.kyc.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx >&log.txt
@@ -89,7 +89,8 @@ installChaincode 1 2
 echo "Installing chaincode on bank org"
 installChaincode 1 3
 
-sleep 2*$DELAY
+sleep $DELAY
+sleep $DELAY
 
 ## instantiate chaincode
 echo "Instantiate chaincode on client org"
