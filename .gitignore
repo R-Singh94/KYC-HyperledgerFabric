@@ -7,3 +7,6 @@ artifacts/crypto-config
 # chaincode ignore
 chaincode/node_modules
 chaincode/package-lock.json
+
+# log files
+**/log.txt
