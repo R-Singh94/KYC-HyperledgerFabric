@@ -59,10 +59,9 @@ updateAnchorPeers() {
     set +x
   fi
   cat log.txt
-  veriCHANNEL_NAMEupdate failed"
-  echoCHANNEL_NAMEhor peers updated for org '$CORE_PEER_LOCALMSPID' on channel '$CHANNEL_NAME' ===================== "
-  sleeCHANNEL_NAME
-  echoCHANNEL_NAME
+  
+  echo "ancghor peers updated for org '$CORE_PEER_LOCALMSPID' on channel '$CHANNEL_NAME' ===================== "
+  
 }
 
 ## Create channel
@@ -81,6 +80,13 @@ updateAnchorPeers 0 2
 echo "Updating anchor peers for Bank..."
 updateAnchorPeers 0 3
 
+# npm start
+cd ./../../../chaincode
+npm start -- --peer.address grpc://client.kyc.com:7052
+cd ./../hyperledger/fabric/peer
+echo "start"
+sleep 10
+
 ## Install chaincode
 echo "Installing chaincode on client org"
 installChaincode 1 1
@@ -89,9 +95,41 @@ installChaincode 1 2
 echo "Installing chaincode on bank org"
 installChaincode 1 3
 
-sleep $DELAY
-sleep $DELAY
+peer chaincode list
+peer channel list
+peer channel fetch
+peer channel getinfo
+
+sleep 5
 
 ## instantiate chaincode
 echo "Instantiate chaincode on client org"
+setGlobals 1 1
+peer chaincode list --installed
+
 instantiateChaincode 1 1
+peer chaincode list -C kycnet --instantiated
+echo "Instantiated chaincode on client org"
+
+echo "Invoke and test"
+
+echo "npm start"
+CORE_CHAINCODE_ID_NAME="testchaincode:v1.0" 
+
+CORE_CHAINCODE_ID_NAME="testchaincode:v1.0" 
+
+cd ./../../../chaincode
+node --inspect testchaincode.js --peer.address grpc://client.kyc.com:7052
+cd ./../hyperledger/fabric/peer
+
+# sleep 5
+
+
+# CORE_PEER_LOCALMSPID=ClientMSP CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/kyc.com/users/Admin\@kyc.com/msp 
+
+
+setGlobals 1 1
+peer chaincode invoke -n testchaincode -C kycnet -c '{"args": ["query", "A"]}' -o orderer.kyc.com:7050
+
+
+

@@ -36,6 +36,7 @@ services:
         - peer0.Client.kyc.com:/var/hyperledger/production
     ports:
       - 7051:7051
+      - 7052:7052
 
   peer1.Client.kyc.com:
     container_name: peer1.Client.kyc.com

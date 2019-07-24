@@ -1,79 +1,44 @@
-
-'use strict';
 const shim = require('fabric-shim');
-const util = require('util');
-const { Contract, Context } = require('fabric-contract-api');
+const Chaincode = class {
+   async Init(stub){
+       let ret = stub.getFunctionAndParameters();
+       let args = ret.params;
+       let a = args[0];
+       let aValue = args[1];
+       let b = args[2];
+       let bValue = args[3];
+await stub.putState(a, Buffer.from(aValue));
+await stub.putState(b, Buffer.from(bValue));
 
+return shim.success(Buffer.from("Initialized Successfully"));
+   }
+   async Invoke(stub){
+       let ret = stub.getFunctionAndParameters();
+       let fcn = [ret.fcn];
 
-let chaincode = class {
-        async Init(Stub){
-                console.info("Instantiated chaincode");
-                return shim.success();
-        }
+       return fcn(ret.params);
+   }
+   async transfer(stub, args){
+       let a = args[0];
+       let b = args[1];
+       let value = args[2];
+   let amount = parseInt(value);
 
-        async Invoke(Stub){
-                let ret = Stub.getFunctionAndParameters();
-                console.info(ret);
+   let aBalance = await stub.getState(a);
+   let bBalance = await stub.getState(b);
 
-                let method = this[ret.fcn];
-                if(!method){
-                        console.error("no function of name:' + ret.fcn + ' found'");
-                        throw new error('Received unknown function ' + ret.fcn + ' invocation');
-                }
-                
-                try{
-                        let payload = await method(Stub, ret.params);
-                        return shim.success(payload);
-                } catch(err){
-                        console.log(err);
-                        return shim.error(err);
-                }
-        }
-        
+   aBalance = parseInt(aBalance) - amount;
+   bBalance = parseInt(bBalance) + amount;
 
-        // methods
-        async test(Stub){
-                return "test success"
-        }
+   await stub.putState(a, Buffer.from(aBalance.toString()));
+   await stub.putState(b, Buffer.from(bBalance.toString()));
 
-        async initLedger(Stub,args){
-                console.info("ledger initialize");
-                let docs = [];
-                docs.push({
-                        id:1,
-                        name:"test",
-                        hash:"later",
-                        type:1
-                });
-
-                docs.push({
-                        id:2,
-                        name:"test-2",
-                        hash:"later-2",
-                        type:1
-                });
-
-                docs.forEach((doc,index)=>{
-                        await Stub.putState('doc'+index,Buffer.from(JSON.stringify(doc)));
-                        console.info("added" + doc);
-                })
-                console.info("Initialization complete");
-        }
-
-        async changeDocument(Stub, args){
-                console.info("modification started");
-                if(args.length !=2){
-                        throw new error("2 arguements expected");
-                }
-
-                let docBytes= await Stub.getState(args[0]);
-                let doc = JSON.parse(docBytes);
-                doc.hash=arg[2];
-
-                await Stub.putState(args[0],Buffer.from(JSON.stringify(doc)));
-                console.info("modification done");
-
-        }
-}
-
-shim.start(new chaincode());
+   return shim.success(Buffer.from("Transfer Successful!!"));
+   }
+   async query(stub, args){
+       let a = args[0]
+       let aBalance = stub.getState(a);
+   return shim.success(aBalance);
+   }
+};
+shim.start(new Chaincode());

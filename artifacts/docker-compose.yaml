@@ -20,10 +20,10 @@ services:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca.kyc.com
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.Bank.kyc.com-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/e18e5e9f62ab72af17f49b365056d2ca564ebda705fe3a57e55695f177bd7150_sk
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/c9dc783a1c59803f7449328a84f751179f3f739b10132b84026af67dd3f9d9bf_sk
     ports:
       - "6054:6054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.Bank.kyc.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/e18e5e9f62ab72af17f49b365056d2ca564ebda705fe3a57e55695f177bd7150_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.Bank.kyc.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/c9dc783a1c59803f7449328a84f751179f3f739b10132b84026af67dd3f9d9bf_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/Bank.kyc.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: bankca.kyc.com
@@ -36,10 +36,10 @@ services:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca.kyc.com
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.Client.kyc.com-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/deea881a8d4d88a64e5cbba2ccbbabb5f4b4800ad6e2a699faaf18505e1fc4c8_sk
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/e2e016a13389aab870d68f9f260008d1ccf866f60324b0fd888a491405fc61a8_sk
     ports:
       - "6064:6064"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.Client.kyc.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/deea881a8d4d88a64e5cbba2ccbbabb5f4b4800ad6e2a699faaf18505e1fc4c8_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.Client.kyc.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/e2e016a13389aab870d68f9f260008d1ccf866f60324b0fd888a491405fc61a8_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/Client.kyc.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: clientca.kyc.com
@@ -52,10 +52,10 @@ services:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca.kyc.com
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.Validator.kyc.com-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/268ca20ad3a0f814a39bf6ac4cc6520c6bf726c56538e3faa8283d0c9aa56e8c_sk
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/1c0297f1954e8d18e9ed93669a0f943e7e28194ca8d385a4eb523b32f250bba1_sk
     ports:
       - "6074:6074"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.Validator.kyc.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/268ca20ad3a0f814a39bf6ac4cc6520c6bf726c56538e3faa8283d0c9aa56e8c_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.Validator.kyc.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/1c0297f1954e8d18e9ed93669a0f943e7e28194ca8d385a4eb523b32f250bba1_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/Validator.kyc.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: validatorca.kyc.com
